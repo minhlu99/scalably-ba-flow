@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scalably Product & BA Operating Protocol — Presentation Deck</title>
+  <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Inter"', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+            },
+            accent: {
+              cyan: '#06b6d4',
+              indigo: '#6366f1',
+              amber: '#f59e0b',
+              rose: '#f43f5e',
+              purple: '#a855f7',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #080c14;
+      color: #e2e8f0;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    .slide {
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98) translateY(12px);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4.25rem 2.5rem;
+      overflow-y: auto;
+    }
+
+    @media (min-width: 1024px) {
+      .slide {
+        padding: 4.5rem 3.5rem;
+      }
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(51, 65, 85, 0.6);
+      box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.45);
+    }
+
+    .glass-card-hover {
+      transition: all 0.2s ease;
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: rgba(22, 33, 58, 0.85);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -6px rgba(16, 185, 129, 0.15);
+    }
+
+    .gradient-text-emerald {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      border-radius: 9999px;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.14;
+    }
+
+    .step-tab.active {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.16) !important;
+      color: #34d399 !important;
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        background: #080c14 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      #app-controls, #progress-bar-container, #overview-modal, #help-modal {
+        display: none !important;
+      }
+      .slide {
+        position: relative !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh !important;
+        padding: 2.5rem !important;
+        display: flex !important;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(71, 85, 105, 0.5);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.6);
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-slate-200">
+
+  <!-- Ambient Glow Effects -->
+  <div class="ambient-glow w-[550px] h-[550px] bg-emerald-500 top-[-100px] left-[-100px]"></div>
+  <div class="ambient-glow w-[600px] h-[600px] bg-indigo-600 bottom-[-150px] right-[-100px]"></div>
+  <div class="ambient-glow w-[400px] h-[400px] bg-cyan-500 top-[35%] right-[20%]"></div>
+
+  <!-- Background Grid Pattern -->
+  <div class="fixed inset-0 bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:28px_28px] opacity-20 pointer-events-none z-0"></div>
+
+  <!-- Top Progress Bar -->
+  <div id="progress-bar-container" class="fixed top-0 left-0 right-0 h-1.5 bg-slate-800/60 backdrop-blur z-50">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 w-0 transition-all duration-300 shadow-[0_0_12px_rgba(16,185,129,0.6)]"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 h-14 px-8 flex justify-between items-center z-40 bg-slate-950/70 backdrop-blur-md border-b border-slate-800/60 text-xs text-slate-400 font-mono">
+    <div class="flex items-center gap-2.5">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-semibold text-slate-200 uppercase tracking-widest font-display text-xs md:text-sm">Scalably Membership</span>
+      <span class="text-slate-600">/</span>
+      <span class="text-emerald-400 font-mono text-xs md:text-sm">Operating Protocol</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="slide-indicator" class="bg-slate-800/80 border border-slate-700/60 px-3 py-1 rounded-full text-slate-300 text-xs font-mono">
+        01 / 09
+      </span>
+      <button onclick="toggleOverview()" class="p-1.5 px-2.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5 border border-slate-700/60" title="Tổng quan slides (G hoặc Esc)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        <span class="hidden sm:inline">Overview (G)</span>
+      </button>
+      <button onclick="toggleFullScreen()" class="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-all text-xs border border-slate-700/60" title="Toàn màn hình (F)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================== -->
+  <!-- SLIDES DECK                                                    -->
+  <!-- ============================================================== -->
+  <main id="slides-container" class="relative w-full h-screen overflow-hidden z-10">
+
+    <!-- ==================== SLIDE 1: COVER ==================== -->
+    <section class="slide active" data-slide="1">
+      <div class="max-w-5xl mx-auto w-full text-center space-y-6 my-auto">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs md:text-sm font-mono uppercase tracking-widest">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          Modern Operating Standard
+        </div>
+
+        <h1 class="text-4xl md:text-6xl font-extrabold font-display tracking-tight text-white leading-tight">
+          Quy Trình Nghiệp Vụ &amp; Chuẩn Hóa Tài Liệu BA
+          <span class="block mt-2 gradient-text-emerald">Operating Protocol &amp; Workflow</span>
+        </h1>
+
+        <div class="pt-3 flex flex-wrap justify-center gap-3 text-xs md:text-sm font-mono">
+          <span class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700/80 text-emerald-400">SSOT Architecture</span>
+          <span class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700/80 text-cyan-400">SLA 24h / 48h</span>
+          <span class="px-3.5 py-1.5 rounded-xl bg-slate-900/80 border border-slate-700/80 text-indigo-400">Internal App Vision</span>
+        </div>
+
+        <div class="pt-4 text-xs md:text-sm text-slate-500 font-mono">
+          Nhấn phím <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">Space</kbd> hoặc <kbd class="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">→</kbd> để bắt đầu
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 2: CONTEXT & VISION ==================== -->
+    <section class="slide" data-slide="2">
+      <div class="max-w-7xl mx-auto w-full space-y-5 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-emerald-400 uppercase tracking-wider">01. Bối cảnh &amp; Tầm nhìn</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Mục Tiêu Bài Bản Hóa &amp; Lộ Trình Phát Triển
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-1">
+            Bám sát cách làm việc hiện tại của team nhưng được văn bản hóa bài bản và có quy tắc dứt điểm.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <!-- Card 1 -->
+          <div class="glass-card p-5 md:p-6 rounded-2xl border-l-4 border-l-emerald-400 space-y-2.5">
+            <div class="text-xs font-mono text-emerald-400 font-bold uppercase">1. BÀI BẢN HÓA &amp; DOCUMENT HÓA</div>
+            <div class="text-base md:text-lg font-bold text-white">Chuyển Kinh Nghiệm Thành Quy Tắc (Rules)</div>
+            <ul class="text-sm text-slate-300 space-y-2 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Vẫn giữ nguyên bản chất:</strong> Không đảo lộn luồng làm việc mà đúc kết lại các bước đang chạy thành tài liệu sống chuẩn mực (SSOT).</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Rõ ràng hành động:</strong> Khi gặp bất kỳ tình huống nào (kẹt câu hỏi, đổi scope, lỗi spec) đều có sẵn rule để biết ngay ai xử lý trong bao lâu.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card p-5 md:p-6 rounded-2xl border-l-4 border-l-cyan-400 space-y-2.5">
+            <div class="text-xs font-mono text-cyan-400 font-bold uppercase">2. GIAI ĐOẠN CHẠY THỬ (PILOT)</div>
+            <div class="text-base md:text-lg font-bold text-white">Thực Thi Thử Nghiệm &amp; Tối Ưu Cùng Team</div>
+            <ul class="text-sm text-slate-300 space-y-2 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>Đề xuất mở để hoàn thiện:</strong> Bộ quy trình này đưa ra để team áp dụng thử trong các Sprint tới và tiếp tục góp ý điều chỉnh.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>Đo lường tính phù hợp:</strong> Kiểm chứng thực tế các mốc SLA 24h/48h và quy tắc Change Log để đạt nhịp độ tối ưu nhất.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card p-5 md:p-6 rounded-2xl border-l-4 border-l-indigo-400 space-y-2 md:col-span-2">
+            <div class="text-xs font-mono text-indigo-400 font-bold uppercase">3. ĐÍCH ĐẾN DÀI HẠN: XÂY DỰNG APP NỘI BỘ (INTERNAL APP)</div>
+            <div class="text-base md:text-lg font-bold text-white">Số Hóa Toàn Diện Dựa Trên Đề Xuất Của CTO Legos</div>
+            <p class="text-sm md:text-[15px] text-slate-300 leading-relaxed">
+              Sau khi quy trình trên Google Docs &amp; Google Sheets đã chạy trơn tru và được kiểm chứng thực tế, bước tiếp theo là <strong>xây dựng một Ứng dụng Nội bộ (Internal App / Tooling)</strong> tự động hóa toàn bộ việc quản lý requirement, phê duyệt spec, theo dõi trạng thái và đồng bộ tài liệu, giúp team tối ưu năng suất tối đa.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 3: BENCHMARKS ==================== -->
+    <section class="slide" data-slide="3">
+      <div class="max-w-7xl mx-auto w-full space-y-5 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-emerald-400 uppercase tracking-wider">02. Cơ sở tiêu chuẩn</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Tham Chiếu Tiêu Chuẩn Nào?
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-1">
+            Áp dụng 3 mô hình vận hành sản phẩm công nghệ tiên tiến trên thế giới.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          <!-- Standard 1: Linear -->
+          <div class="glass-card p-5 rounded-2xl border-t-2 border-t-emerald-400 space-y-3">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold">LINEAR METHOD</span>
+                <span class="text-slate-500 text-xs font-mono">Silicon Valley</span>
+              </div>
+              <div class="text-base md:text-lg font-bold text-white mt-2">Living Specs &amp; Async RFC</div>
+            </div>
+            <ul class="text-sm text-slate-300 space-y-2 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Single Source of Truth:</strong> Tài liệu sống tập trung tại 1 file Google Doc duy nhất; triệt tiêu trôi thông tin qua chat.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Review trước &ge; 4h:</strong> Gửi tài liệu trước Grooming để đọc trước; cuộc họp chỉ dành chốt quyết định.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-400 font-bold">•</span>
+                <span><strong>Date-based Tracking:</strong> Đánh dấu thay đổi bằng <code class="text-amber-300 font-mono text-xs">[Updated DD/MM]</code> thay vì version v1.1.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Standard 2: Shape Up -->
+          <div class="glass-card p-5 rounded-2xl border-t-2 border-t-cyan-400 space-y-3">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono text-xs font-bold">SHAPE UP &amp; TRIO</span>
+                <span class="text-slate-500 text-xs font-mono">Basecamp / SVPG</span>
+              </div>
+              <div class="text-base md:text-lg font-bold text-white mt-2">Shaping Trước Khi Building</div>
+            </div>
+            <ul class="text-sm text-slate-300 space-y-2 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>Làm rõ biên độ (Appetite):</strong> Phân tách rõ việc làm ngay (In-Scope) và việc tách sang Phase 2 Parking Lot.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>Đồng thuận bộ ba:</strong> CTO Legos + Product Lead Đăng + BA làm rõ bài toán trước khi Dev bắt tay code.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-cyan-400 font-bold">•</span>
+                <span><strong>Chống phình việc:</strong> Khi Spec kéo dài quá 3 ngày, lập tức tách phần phụ sang Phase 2 để bảo vệ tiến độ.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Standard 3: BABOK -->
+          <div class="glass-card p-5 rounded-2xl border-t-2 border-t-indigo-400 space-y-3">
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <span class="px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-mono text-xs font-bold">BABOK v3 &amp; SHIFT-LEFT</span>
+                <span class="text-slate-500 text-xs font-mono">Atlassian / QA</span>
+              </div>
+              <div class="text-base md:text-lg font-bold text-white mt-2">Chất Lượng Đi Trước (Shift-Left)</div>
+            </div>
+            <ul class="text-sm text-slate-300 space-y-2 leading-relaxed">
+              <li class="flex items-start gap-2">
+                <span class="text-indigo-400 font-bold">•</span>
+                <span><strong>Rà soát đa góc nhìn:</strong> QC Vân viết AC/Edge cases và BA Tú/Minh đắp State Machine ngay từ lúc viết Spec.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-indigo-400 font-bold">•</span>
+                <span><strong>Dev Self-Test Gate:</strong> Dev Team tự test pass 100% Happy case trước khi chuyển giao cho QC.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-indigo-400 font-bold">•</span>
+                <span><strong>DoD trọn vẹn:</strong> Đưa Scalably Wiki vào Definition of Done — Chưa xong Wiki thì chưa đóng DONE.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 4: ROLES & RESPONSIBILITIES ==================== -->
+    <section class="slide" data-slide="4">
+      <div class="max-w-7xl mx-auto w-full space-y-4 my-auto">
+        <div class="flex justify-between items-end">
+          <div>
+            <div class="text-xs md:text-sm font-mono text-emerald-400 uppercase tracking-wider">03. Tổ chức nhân sự</div>
+            <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+              Phân Vai Trách Nhiệm (RACI Benchmark)
+            </h2>
+          </div>
+          <span class="text-xs md:text-sm text-slate-400 font-mono hidden sm:inline">Phân công theo đầu việc cụ thể</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          <!-- Column 1: Lãnh đạo (Yama -> Legos -> Đăng) -->
+          <div class="glass-card p-4 rounded-2xl space-y-2.5 border-l-4 border-l-rose-400">
+            <div class="text-xs font-mono text-rose-400 font-bold uppercase">1. Phê duyệt &amp; Lãnh đạo</div>
+            
+            <div class="space-y-2.5">
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+                  <span>PM Yama</span>
+                  <span class="text-rose-400 text-xs font-mono">SLA &le; 48h</span>
+                </div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Làm việc trực tiếp với Khách hàng &amp; đưa yêu cầu về.</li>
+                  <li>• Phê duyệt phạm vi (Scope) và Change Request (CR).</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+                  <span>CTO Legos</span>
+                  <span class="text-indigo-400 text-xs font-mono">Check &le; 2h</span>
+                </div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Định hướng kiến trúc hệ thống, Database &amp; API.</li>
+                  <li>• Đánh giá tác động kỹ thuật &amp; quyền chặn task rủi ro.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+                  <span>Product Lead Đăng</span>
+                  <span class="text-cyan-400 text-xs font-mono">SLA &le; 24h</span>
+                </div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Cùng BA Nam tiếp nhận yêu cầu từ PM Yama.</li>
+                  <li>• Giải đáp bài toán nội bộ &amp; duyệt Default Assumption.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Đội ngũ BA (Nam, Vân, Tú, Minh) -->
+          <div class="glass-card p-4 rounded-2xl space-y-2.5 border-l-4 border-l-emerald-400">
+            <div class="text-xs font-mono text-emerald-400 font-bold uppercase">2. Đội ngũ BA (Phân việc cụ thể)</div>
+            
+            <div class="space-y-2.5">
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-emerald-300 text-sm md:text-base">BA Nam (Chủ trì Spec &amp; Điều phối)</div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Tạo Doc, làm rõ sơ bộ cùng Product Lead Đăng.</li>
+                  <li>• Viết chính <strong>Phần 1 (User Flow)</strong> &amp; <strong>Phần 2 (UI Fields)</strong>.</li>
+                  <li>• Quản trị Master Tracker &amp; điều phối chốt Grooming.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-purple-300 text-sm md:text-base">QC Vân (Phụ trách QC &amp; Nghiệm thu)</div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Đồng soạn <strong>Phần 4 (Acceptance Criteria BDD)</strong>.</li>
+                  <li>• Chuẩn bị Test Cases &amp; cùng BA Nam viết Scalably Wiki.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-amber-300 text-sm md:text-base">BA Tú &amp; Minh (Logic &amp; Kỹ thuật)</div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Đồng soạn <strong>Phần 3 (State Machine, Business Rules)</strong>.</li>
+                  <li>• Hỗ trợ Review kỹ thuật (&le; 4h) cho bài viết Wiki.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Thiết kế UI/UX & Đội ngũ Dev Team -->
+          <div class="glass-card p-4 rounded-2xl space-y-2.5 border-l-4 border-l-teal-400 flex flex-col justify-between">
+            <div class="space-y-2.5">
+              <div class="text-xs font-mono text-teal-400 font-bold uppercase">3. Thiết kế UI &amp; Lập trình</div>
+              
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-teal-300 text-sm md:text-base">Designers Lý &amp; Kiệt</div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Dựa vào User Flow vẽ Wireframe/Figma từ Ngày 2.</li>
+                  <li>• Đảm bảo đủ 4 trạng thái (Empty, Loading, Error, Success).</li>
+                  <li>• Thực hiện Design QA trên môi trường Staging.</li>
+                </ul>
+              </div>
+
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800">
+                <div class="font-bold text-white text-sm md:text-base">Dev Team (Đội ngũ Lập trình viên)</div>
+                <ul class="text-xs md:text-[13px] text-slate-300 mt-1 space-y-1 leading-snug">
+                  <li>• Đọc Spec trước buổi Grooming tối thiểu 4 tiếng.</li>
+                  <li>• Triển khai code theo đúng Spec APPROVED.</li>
+                  <li>• Tự test pass 100% qua cổng <strong>Dev Self-Test Gate</strong>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-xs text-emerald-300 font-mono">
+              ✔ Shift-Left: Cả team cùng hoàn thiện Spec trước khi code.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 5: THE END-TO-END FLOW ==================== -->
+    <section class="slide" data-slide="5">
+      <div class="max-w-7xl mx-auto w-full space-y-4 my-auto">
+        <div class="flex justify-between items-end">
+          <div>
+            <div class="text-xs md:text-sm font-mono text-emerald-400 uppercase tracking-wider">04. Dòng chảy thực tế</div>
+            <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+              Toàn Bộ Quy Trình Hoạt Động Như Thế Nào?
+            </h2>
+          </div>
+          <span class="text-xs md:text-sm text-slate-400 font-mono hidden sm:inline">Bấm phím 1–6 hoặc click các tab để xem</span>
+        </div>
+
+        <!-- Interactive Stepper Tabs -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 font-mono">
+          <button onclick="setWorkflowStep(1)" id="step-tab-1" class="step-tab active p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 1</span>
+            <span class="font-bold text-xs md:text-sm">1. Tiếp nhận</span>
+          </button>
+          <button onclick="setWorkflowStep(2)" id="step-tab-2" class="step-tab p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 2</span>
+            <span class="font-bold text-xs md:text-sm">2. Đắp Spec</span>
+          </button>
+          <button onclick="setWorkflowStep(3)" id="step-tab-3" class="step-tab p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 3</span>
+            <span class="font-bold text-xs md:text-sm">3. Vẽ UI/UX</span>
+          </button>
+          <button onclick="setWorkflowStep(4)" id="step-tab-4" class="step-tab p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 4</span>
+            <span class="font-bold text-xs md:text-sm">4. Grooming</span>
+          </button>
+          <button onclick="setWorkflowStep(5)" id="step-tab-5" class="step-tab p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 5</span>
+            <span class="font-bold text-xs md:text-sm">5. Code &amp; Wiki</span>
+          </button>
+          <button onclick="setWorkflowStep(6)" id="step-tab-6" class="step-tab p-3 rounded-xl glass-card border border-slate-700 text-left transition-all">
+            <span class="text-[11px] text-slate-500 block">CHẶNG 6</span>
+            <span class="font-bold text-xs md:text-sm">6. Xử lý CR</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Content Display -->
+        <div id="step-content-display" class="glass-card p-5 md:p-6 rounded-2xl border border-emerald-500/30 min-h-[240px] flex flex-col justify-between"></div>
+
+        <!-- Visual Relay Sequence -->
+        <div class="glass-card p-3.5 rounded-xl border border-slate-800 text-xs font-mono text-slate-400 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-rose-400 font-bold">1. PM Yama (Req)</span>
+            <span>&rarr;</span>
+            <span class="text-indigo-400 font-bold">2. CTO Legos &amp; Product Lead Đăng</span>
+            <span>&rarr;</span>
+            <span class="text-emerald-400 font-bold">3. BA Team (Nam, Vân, Tú, Minh)</span>
+            <span>&rarr;</span>
+            <span class="text-teal-400 font-bold">4. Designers Lý &amp; Kiệt</span>
+            <span>&rarr;</span>
+            <span class="text-cyan-400 font-bold">5. Dev Team</span>
+            <span>&rarr;</span>
+            <span class="text-purple-400 font-bold">6. Scalably Wiki &amp; DoD</span>
+          </div>
+          <span class="text-emerald-400 font-semibold">Chu kỳ chuẩn: 3 – 4 ngày hoàn tất Spec</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 6: 3-TIER CHANGELOG ==================== -->
+    <section class="slide" data-slide="6">
+      <div class="max-w-7xl mx-auto w-full space-y-4 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-amber-400 uppercase tracking-wider">05. Quản trị thay đổi</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Quy Tắc Change Request 3 Cấp Độ
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-0.5">Kiểm soát thay đổi theo ngày — không đánh số version v1.1, v1.2 cồng kềnh.</p>
+        </div>
+
+        <div class="glass-card p-3.5 rounded-xl border border-amber-500/40 bg-amber-950/20 flex items-center gap-3 text-xs md:text-sm">
+          <span class="px-2.5 py-1 rounded bg-amber-500 text-slate-950 font-mono font-bold text-xs flex-shrink-0">BASELINE GATE</span>
+          <span class="text-slate-300">
+            Khi Spec đang ở <code class="text-amber-300">DRAFTING</code> hoặc <code class="text-indigo-300">IN REVIEW</code>: Sửa trực tiếp, <strong>KHÔNG ghi Changelog và KHÔNG tô vàng</strong>. Chỉ bắt đầu ghi Changelog khi Spec đã <strong class="text-emerald-400">APPROVED</strong>.
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          <!-- Tier 1 -->
+          <div class="glass-card p-4 md:p-5 rounded-2xl border-t-4 border-t-emerald-400 space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="text-emerald-400 font-mono font-bold text-xs">🟢 CẤP ĐỘ 1: SỬA NHỎ</div>
+              <div class="text-white font-bold text-base mt-1">Chính tả &amp; Định dạng bảng</div>
+              <ul class="text-xs md:text-[13px] text-slate-300 mt-2 space-y-1.5 leading-snug">
+                <li>• Sửa lỗi chính tả, câu từ diễn đạt.</li>
+                <li>• Định dạng lại bảng, ngắt dòng gạch đầu dòng.</li>
+                <li>• Cập nhật link Figma hoặc ảnh minh họa.</li>
+                <li>• <em>Tuyệt đối không đổi dòng code, DB hay Test Case nào.</em></li>
+              </ul>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 font-mono leading-relaxed">
+              <strong class="text-emerald-400 block mb-0.5">HÀNH ĐỘNG:</strong>
+              Sửa trực tiếp trên Spec. KHÔNG ghi Changelog.
+            </div>
+          </div>
+
+          <!-- Tier 2 -->
+          <div class="glass-card p-4 md:p-5 rounded-2xl border-t-4 border-t-amber-400 space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="text-amber-400 font-mono font-bold text-xs">🟡 CẤP ĐỘ 2: CR KỸ THUẬT NHỎ</div>
+              <div class="text-white font-bold text-base mt-1">Chi tiết nhỏ (&lt; 2h Code)</div>
+              <ul class="text-xs md:text-[13px] text-slate-300 mt-2 space-y-1.5 leading-snug">
+                <li>• Đổi giới hạn ký tự (40 chars), dung lượng video (30MB).</li>
+                <li>• Đổi câu thông báo lỗi (validation message).</li>
+                <li>• Bổ sung kịch bản Edge Case phát sinh lúc test.</li>
+              </ul>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1 leading-snug">
+              <strong class="text-amber-400 font-mono block">HÀNH ĐỘNG (CHỈ SỬA NỘI BỘ):</strong>
+              <div><strong>1. Sửa Spec &amp; Log:</strong> Sửa <code>FEAT-00x</code>, ghi <em>0.4 Changelog</em> &amp; tô vàng <span class="bg-amber-400/20 text-amber-300 px-1 py-0.5 rounded font-mono">[Updated DD/MM]</span>.</div>
+              <div><strong>2. Báo team:</strong> Comment tag <code>@Dev @QC</code> tại chỗ sửa.</div>
+              <div><strong>3. Tracker:</strong> Đổi Cột N thành <code>Updated DD/MM</code> <em>(không sửa EN)</em>.</div>
+            </div>
+          </div>
+
+          <!-- Tier 3 -->
+          <div class="glass-card p-4 md:p-5 rounded-2xl border-t-4 border-t-rose-400 space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="text-rose-400 font-mono font-bold text-xs">🔴 CẤP ĐỘ 3: CR LỚN TỪ YAMA</div>
+              <div class="text-white font-bold text-base mt-1">Đổi Scope (&gt; 2h Code)</div>
+              <ul class="text-xs md:text-[13px] text-slate-300 mt-2 space-y-1.5 leading-snug">
+                <li>• Thay đổi User Flow hoặc phân quyền RBAC.</li>
+                <li>• Thêm / bớt tính năng trong phạm vi cam kết.</li>
+                <li>• Đổi cấu trúc Database hoặc tích hợp bên thứ 3.</li>
+              </ul>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1 leading-snug">
+              <strong class="text-rose-400 font-mono block">HÀNH ĐỘNG (ĐỒNG BỘ 3 NƠI):</strong>
+              <div><strong>1. Chặn &amp; Chốt (&le; 2h):</strong> Đổi Tracker thành <code>CHANGE REQUEST</code>; CTO Legos + Product Lead Đăng + BA chốt với PM Yama.</div>
+              <div><strong>2. Sửa Spec &amp; UI:</strong> Cập nhật <code>FEAT-00x</code> (+ tô vàng, tag <code>@Dev @QC</code>) &amp; Figma/Wiki.</div>
+              <div><strong>3. Đồng bộ EN:</strong> Cập nhật <em>0.2 Change Log</em> &amp; <em>Mục 2 Scope</em>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 7: UNHAPPY CASES ==================== -->
+    <section class="slide" data-slide="7">
+      <div class="max-w-7xl mx-auto w-full space-y-4 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-rose-400 uppercase tracking-wider">06. Xử lý sự cố</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Xử Lý Tình Huống Bất Thường (Unhappy Cases)
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-0.5">Kịch bản hành động dứt điểm — không để task bị ngâm hoặc kẹt tin nhắn.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 pt-1">
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-amber-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>1. Nội bộ kẹt câu hỏi &gt; 24h</span>
+              <span class="text-amber-400 font-mono text-xs">TẠI BƯỚC 1</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• <strong class="text-rose-400">Cấm chờ chat!</strong> BA Nam gọi ngay cuộc họp nhanh <strong>30 phút</strong> (Product Lead Đăng + CTO Legos + BA Nam).</li>
+              <li>• Chốt dứt điểm hướng xử lý kỹ thuật/sản phẩm tại chỗ.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-rose-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>2. PM Yama bận &gt; 48h chưa phản hồi</span>
+              <span class="text-rose-400 font-mono text-xs">TẠI BƯỚC 1</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• <em>Chi tiết nhỏ:</em> Product Lead Đăng &amp; BA Nam tự chốt <strong>Default Assumption</strong> để viết tiếp.</li>
+              <li>• <em>Chặn luồng chính:</em> Đổi <strong>BA Status = ON HOLD</strong>, rút khỏi Sprint.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-cyan-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>3. Tính năng phình to (&gt; 3 ngày viết Spec)</span>
+              <span class="text-cyan-400 font-mono text-xs">TẠI BƯỚC 2</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• BA Nam báo ngay Product Lead Đăng trao đổi với PM Yama: <strong>Cắt Scope thành Phase 1 &amp; Phase 2</strong>.</li>
+              <li>• Lưu các hạng mục hoãn vào <em>Section 5: Phase 2 Parking Lot</em>.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-indigo-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>4. Xung đột kỹ thuật tại Grooming</span>
+              <span class="text-indigo-400 font-mono text-xs">TẠI BƯỚC 4</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• <strong class="text-rose-400">Cấm duyệt APPROVED!</strong> Giữ nguyên <code>IN REVIEW</code>.</li>
+              <li>• CTO Legos + Product Lead Đăng + BA Nam cùng giải quyết dứt điểm trong &le; 24h.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-emerald-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>5. Phát hiện thiếu Spec (Spec Gap) lúc code</span>
+              <span class="text-emerald-400 font-mono text-xs">TẠI BƯỚC 5</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• Dev Team / QC thả comment tag <strong>@Nam</strong> trực tiếp trên Google Doc.</li>
+              <li>• BA Nam có trách nhiệm bổ sung tiêu chí AC trong <strong>&le; 4 tiếng</strong> cùng ngày.</li>
+            </ul>
+          </div>
+
+          <div class="glass-card p-4 rounded-xl border-l-4 border-l-purple-500 space-y-1.5">
+            <div class="font-bold text-white text-sm md:text-base flex justify-between items-center">
+              <span>6. Đổi giao diện UI phút chót trước Go-Live</span>
+              <span class="text-purple-400 font-mono text-xs">TẠI BƯỚC 5</span>
+            </div>
+            <ul class="text-xs md:text-[13px] text-slate-300 space-y-1 leading-snug">
+              <li>• QC Vân chụp lại màn hình trên Staging; phối hợp BA Nam cập nhật bài Wiki trong <strong>&le; 4h</strong>.</li>
+              <li>• Nhớ nguyên tắc: <em>Chưa xong Scalably Wiki = Chưa DONE</em>.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 8: SCALABLY WIKI & DOD ==================== -->
+    <section class="slide" data-slide="8">
+      <div class="max-w-7xl mx-auto w-full space-y-5 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-purple-400 uppercase tracking-wider">07. Bàn giao &amp; Vận hành</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Scalably Wiki &amp; Tiêu Chuẩn Hoàn Thành (DoD)
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-1">Tài liệu End-User là một phần bắt buộc của sản phẩm khi Go-Live.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <!-- DoD Rule -->
+          <div class="glass-card p-5 md:p-6 rounded-2xl border-l-4 border-l-purple-500 space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-purple-400 font-bold uppercase">DEFINITION OF DONE (DOD) RULE</div>
+              <h3 class="text-xl font-bold text-white mt-1">Chưa Xong Wiki = Chưa DONE</h3>
+              <ul class="text-sm text-slate-300 mt-3 space-y-2.5 leading-relaxed">
+                <li class="flex items-start gap-2">
+                  <span class="text-purple-400 font-bold">•</span>
+                  <span>Chỉ chuyển trạng thái <code class="text-emerald-400 font-mono">DONE</code> trên Master Tracker khi bài viết hướng dẫn trên Scalably Wiki đã duyệt xuất bản.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <span class="text-purple-400 font-bold">•</span>
+                  <span>Triệt tiêu tình trạng: Code xong, test pass nhưng người dùng và ban vận hành phía Nhật không biết cách sử dụng tính năng mới.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="text-xs text-purple-300 font-mono pt-3 border-t border-slate-800">
+              Đích đến: scalably.com/knowledge-base
+            </div>
+          </div>
+
+          <!-- 3-Step Wiki Flow -->
+          <div class="glass-card p-5 md:p-6 rounded-2xl border-l-4 border-l-teal-500 space-y-3 flex flex-col justify-between">
+            <div>
+              <div class="text-xs font-mono text-teal-400 font-bold uppercase">QUY TRÌNH PHỐI HỢP WIKI</div>
+              <h3 class="text-xl font-bold text-white mt-1">3 Bước Cập Nhật Nhanh</h3>
+              
+              <ul class="space-y-2.5 text-sm mt-3">
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                  <span class="w-5 h-5 rounded bg-teal-500/20 text-teal-300 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">1</span>
+                  <div>
+                    <strong class="text-white">BA Nam &amp; QC Vân soạn thảo:</strong>
+                    <div class="text-slate-400 text-xs md:text-[13px] mt-0.5">Viết bài &amp; chụp ảnh màn hình thật trên Staging khi Dev chuyển READY FOR QC.</div>
+                  </div>
+                </li>
+
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                  <span class="w-5 h-5 rounded bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">2</span>
+                  <div>
+                    <strong class="text-white">BA Tú &amp; Minh review kỹ thuật (&le; 4h):</strong>
+                    <div class="text-slate-400 text-xs md:text-[13px] mt-0.5">Kiểm tra thông số, giới hạn và các bước cài đặt đảm bảo khớp 100% với code.</div>
+                  </div>
+                </li>
+
+                <li class="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                  <span class="w-5 h-5 rounded bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold text-xs flex-shrink-0 mt-0.5">3</span>
+                  <div>
+                    <strong class="text-white">Product Lead Đăng &amp; PM Yama duyệt xuất bản:</strong>
+                    <div class="text-slate-400 text-xs md:text-[13px] mt-0.5">Bấm Publish trên Knowledge Base đồng thời với thời điểm Go-Live.</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="text-xs text-teal-300 font-mono pt-2 border-t border-slate-800">
+              ★ Giá trị gia tăng: Cung cấp tập dữ liệu sạch cho AI Integration.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SLIDE 9: RESOURCE HUB & NEXT STEPS ==================== -->
+    <section class="slide" data-slide="9">
+      <div class="max-w-7xl mx-auto w-full space-y-5 my-auto">
+        <div>
+          <div class="text-xs md:text-sm font-mono text-emerald-400 uppercase tracking-wider">08. Tài nguyên trực tiếp &amp; Triển khai</div>
+          <h2 class="text-3xl md:text-4xl font-bold font-display text-white mt-1">
+            Hệ Thống Tài Liệu &amp; Bước Tiếp Theo
+          </h2>
+          <p class="text-sm md:text-base text-slate-400 font-light mt-1">Toàn bộ 9 tài liệu đã được chuẩn hóa và sẵn sàng áp dụng ngay.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+          <!-- Link 1 -->
+          <a href="https://docs.google.com/spreadsheets/d/1zRDhZsz_hzOJ_2zdPLe2sbEWUAHsZKyUhRqQ0ubkb8Q/edit" target="_blank" class="glass-card p-5 rounded-2xl glass-card-hover border-t-2 border-t-emerald-400 block group">
+            <div class="text-emerald-400 font-mono text-xs font-bold">GOOGLE SHEETS</div>
+            <div class="font-bold text-white text-base md:text-lg mt-1 group-hover:text-emerald-300">00_Master Tracker</div>
+            <p class="text-slate-400 mt-2 text-xs md:text-sm leading-relaxed">• Tab 1: 01_Master_RTM<br>• Tab 2: Dashboard 6 bước &amp; RACI</p>
+          </a>
+
+          <!-- Link 2 -->
+          <a href="https://docs.google.com/document/d/13ATsJv-yFS9XiG9VotpbRTndOm9dZVFTcpfuhB24RuA/edit" target="_blank" class="glass-card p-5 rounded-2xl glass-card-hover border-t-2 border-t-cyan-400 block group">
+            <div class="text-cyan-400 font-mono text-xs font-bold">EXTERNAL TEMPLATE (EN)</div>
+            <div class="font-bold text-white text-base md:text-lg mt-1 group-hover:text-cyan-300">Product Overview Template</div>
+            <p class="text-slate-400 mt-2 text-xs md:text-sm leading-relaxed">• Khung Tiếng Anh cho PM Yama<br>• Living Scope &amp; Phase 2 Backlog</p>
+          </a>
+
+          <!-- Link 3 -->
+          <a href="https://docs.google.com/document/d/1_Ny742y6YkTrmtLE6PBDiIF06gs1gDQ4LtpW1Bsq5l8/edit" target="_blank" class="glass-card p-5 rounded-2xl glass-card-hover border-t-2 border-t-indigo-400 block group">
+            <div class="text-indigo-400 font-mono text-xs font-bold">INTERNAL TEMPLATE (VI)</div>
+            <div class="font-bold text-white text-base md:text-lg mt-1 group-hover:text-indigo-300">Feature Spec Template</div>
+            <p class="text-slate-400 mt-2 text-xs md:text-sm leading-relaxed">• Mẫu 4 phần chuẩn 11 bảng<br>• Dành cho BA, Dev Team, QC, UI/UX</p>
+          </a>
+        </div>
+
+        <!-- Next Steps Banner -->
+        <div class="glass-card p-5 rounded-2xl border border-slate-700/80 space-y-3">
+          <div class="text-xs font-mono text-emerald-400 font-bold uppercase">KẾ HOẠCH BẮT ĐẦU ÁP DỤNG</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+              <strong class="text-white block text-sm">1. Toàn team Review:</strong>
+              <span class="text-slate-400 text-xs md:text-[13px] mt-1 block">Đọc qua Template &amp; đóng góp ý kiến phản hồi.</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+              <strong class="text-white block text-sm">2. Chốt với PM Yama:</strong>
+              <span class="text-slate-400 text-xs md:text-[13px] mt-1 block">Product Lead Đăng &amp; BA Nam thống nhất SLA 48h và Scope Tiếng Anh.</span>
+            </div>
+            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
+              <strong class="text-white block text-sm">3. Áp dụng chính thức:</strong>
+              <span class="text-slate-400 text-xs md:text-[13px] mt-1 block">Chạy thử nghiệm (Pilot) trước khi số hóa thành App Nội bộ.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center text-sm text-slate-400">
+          Cảm ơn CTO Legos, Product Lead Đăng, PM Yama, cùng toàn bộ anh em Team Scalably! 🚀
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- FLOATING CONTROLS                                              -->
+  <!-- ============================================================== -->
+  <footer id="app-controls" class="fixed bottom-0 left-0 right-0 h-14 px-8 flex justify-between items-center z-40 bg-slate-950/70 backdrop-blur-md border-t border-slate-800/60 text-xs">
+    <div class="flex items-center gap-2">
+      <button onclick="prevSlide()" class="p-2 px-3 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 shadow transition-all flex items-center gap-1.5" title="Slide trước (← hoặc Phím lên)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <span class="hidden sm:inline font-mono">Prev</span>
+      </button>
+      <button onclick="nextSlide()" class="p-2 px-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold border border-emerald-400/40 shadow transition-all flex items-center gap-1.5" title="Slide kế tiếp (→ hoặc Space)">
+        <span class="hidden sm:inline font-mono">Next</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+
+    <div id="nav-dots" class="hidden md:flex items-center gap-1.5 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800 backdrop-blur-md shadow-md"></div>
+
+    <div class="flex items-center gap-2">
+      <button onclick="window.print()" class="p-2 px-3 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 shadow transition-all flex items-center gap-1.5" title="Xuất PDF (Cmd + P)">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        <span class="hidden sm:inline font-mono">PDF Export</span>
+      </button>
+      <button onclick="toggleHelp()" class="p-2 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700/60 shadow transition-all">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+      </button>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- OVERVIEW GRID MODAL                                            -->
+  <!-- ============================================================== -->
+  <div id="overview-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-xl z-50 opacity-0 pointer-events-none transition-all duration-300 flex flex-col p-6 sm:p-10">
+    <div class="flex justify-between items-center mb-6 max-w-5xl mx-auto w-full">
+      <div>
+        <h3 class="text-xl font-bold text-white font-display">Slide Overview</h3>
+        <p class="text-xs text-slate-400 font-mono">Bấm vào bất kỳ slide nào để chuyển đến ngay</p>
+      </div>
+      <button onclick="toggleOverview()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <div id="overview-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-y-auto max-w-5xl mx-auto w-full flex-1 p-2"></div>
+  </div>
+
+  <!-- HELP MODAL -->
+  <div id="help-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 opacity-0 pointer-events-none transition-all duration-200 flex items-center justify-center p-4">
+    <div class="glass-card max-w-md w-full p-6 rounded-2xl border border-slate-700 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center">
+        <h4 class="font-bold text-white text-base font-display">Bảng Phím Tắt Thuyết Trình</h4>
+        <button onclick="toggleHelp()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div class="space-y-2 text-xs font-mono">
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">Slide Kế tiếp:</span>
+          <span class="text-emerald-400">Space / → / ↓ / PageDown</span>
+        </div>
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">Slide Trước:</span>
+          <span class="text-emerald-400">← / ↑ / PageUp / Backspace</span>
+        </div>
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">Xem Tất cả Slides:</span>
+          <span class="text-cyan-400">G / Esc</span>
+        </div>
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">Chuyển chặng Slide 5:</span>
+          <span class="text-amber-400">Phím 1 &rarr; 6</span>
+        </div>
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">Toàn màn hình:</span>
+          <span class="text-indigo-400">F</span>
+        </div>
+        <div class="flex justify-between p-2 rounded bg-slate-900 border border-slate-800">
+          <span class="text-slate-300">In / Xuất PDF:</span>
+          <span class="text-amber-400">Cmd + P / Ctrl + P</span>
+        </div>
+      </div>
+      <button onclick="toggleHelp()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded-xl font-medium transition-all">
+        Đã hiểu
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+
+    const slideTitles = [
+      "Trang Bìa: Scalably Protocol",
+      "01. Bối Cảnh, Mục Tiêu & App Nội Bộ",
+      "02. Cơ Sở Tiêu Chuẩn Tham Chiếu",
+      "03. Phân Vai Trách Nhiệm Thực Tế",
+      "04. Dòng Chảy Toàn Bộ Quy Trình",
+      "05. Quản Trị Change Request 3 Cấp Độ",
+      "06. Xử Lý Tình Huống Bất Thường",
+      "07. Scalably Wiki & DoD",
+      "08. Tài Nguyên & Kế Hoạch Triển Khai"
+    ];
+
+    const workflowStepsData = {
+      1: {
+        stage: "CHẶNG 1: TIẾP NHẬN & LÀM RÕ SƠ BỘ (SLA: NỘI BỘ &le; 24H • PM YAMA &le; 48H)",
+        actors: "PM Yama ➔ BA Nam & Product Lead Đăng & CTO Legos",
+        bullets: [
+          "PM Yama chuyển Req / CR mới về; BA Nam tạo file Google Doc từ Template &amp; lên Master Tracker.",
+          "<strong>Đạt tối thiểu 1 (Mục tiêu &amp; Scope):</strong> Chốt xong <em>0.2 Executive Summary (EN)</em> — làm cho ai, giải quyết gì, In-Scope vs. Out-of-Scope.",
+          "<strong>Đạt tối thiểu 2 (Câu hỏi mở):</strong> Lọc hết điểm mờ vào <em>0.3 Open Questions</em> kèm người chốt (Đăng/Legos &le; 24h; Yama &le; 48h).",
+          "<strong>Đạt tối thiểu 3 (Luồng chính):</strong> Thống nhất được User Flow chính để tag team đắp tiếp; nếu kẹt câu hỏi chặn luồng chính &gt; 48h ➔ đổi <code>ON HOLD</code>."
+        ],
+        artifact: "File FEAT-00x (DRAFTING) đạt đủ 3 tiêu chí tối thiểu để mở khóa Chặng 2 &amp; 3"
+      },
+      2: {
+        stage: "CHẶNG 2: PHỐI HỢP XÂY DỰNG SPEC (ĐỘI NGŨ BA — NGÀY 2 ĐẾN NGÀY 3)",
+        actors: "BA Nam ➔ Tag QC Vân, BA Tú & Minh",
+        bullets: [
+          "BA Nam tag QC Vân, BA Tú &amp; Minh vào Google Doc để cùng phân tích đào sâu logic nghiệp vụ.",
+          "BA Tú &amp; Minh: Đồng soạn Phần 3 (State Machine, Dependencies, Business Rules) &amp; rà soát kỹ thuật.",
+          "QC Vân: Đồng soạn Phần 4 (Acceptance Criteria BDD Given-When-Then &amp; các kịch bản Edge Cases).",
+          "Mục tiêu: Triệt tiêu toàn bộ lỗ hổng logic nghiệp vụ trước khi chuyển sang giai đoạn vẽ UI và code."
+        ],
+        artifact: "Hoàn thiện 100% nội dung Phần 3 (Logic) &amp; Phần 4 (AC / Test Criteria)"
+      },
+      3: {
+        stage: "CHẶNG 3: XÂY DỰNG USER FLOW & THIẾT KẾ UI/UX (NGÀY 2 SONG SONG)",
+        actors: "BA Nam ➔ Designers Lý & Kiệt",
+        bullets: [
+          "BA Nam chốt User Flow và bảng đặc tả các trường dữ liệu (Phần 1 &amp; 2), bàn giao ngay cho Designers Lý &amp; Kiệt.",
+          "Designers Lý &amp; Kiệt vẽ Wireframe &amp; UI Figma song song từ Ngày 2 (không chờ viết xong 100% Spec mới vẽ).",
+          "Thiết kế bắt buộc đủ 4 trạng thái: Empty (trống), Loading (tải), Error (lỗi), Success (thành công).",
+          "Gắn trực tiếp liên kết Figma Frame vào Mục 2.1 của Spec để Dev và QC tiện đối chiếu."
+        ],
+        artifact: "Link Figma Frame chuẩn 4 trạng thái được gắn vào Mục 2.1 của Spec"
+      },
+      4: {
+        stage: "CHẶNG 4: REVIEW NỘI BỘ & HỌP GROOMING (TRƯỚC HỌP &ge; 4H • CHỐT NGÀY 3–4)",
+        actors: "BA Nam ➔ CTO Legos, Dev Team, QC ➔ Duyệt APPROVED",
+        bullets: [
+          "BA Nam gắn link Figma, đổi trạng thái IN REVIEW, gửi link Doc cho cả team trước giờ họp tối thiểu 4 tiếng.",
+          "CTO Legos, Dev Team và QC đọc trước tài liệu, thả Comment phản biện trực tiếp trên Google Doc.",
+          "<strong>Fast-Track (Bỏ qua họp nếu đơn giản):</strong> Nếu tính năng rõ ràng, không có comment tranh luận cần chốt ➔ <strong>pass qua buổi họp</strong> để chốt nhanh qua chat/Doc; chỉ họp Grooming khi tính năng phức tạp hoặc có xung đột.",
+          "Khi 100% comment được Resolve &amp; CTO Legos đồng thuận: BA Nam đổi BA Status = APPROVED."
+        ],
+        artifact: "BA Status = APPROVED trên Master Tracker (Cột N: Ngày chốt DD/MM/YYYY)"
+      },
+      5: {
+        stage: "CHẶNG 5: THỰC THI SONG SONG & SOẠN SCALABLY WIKI (THEO SPRINT)",
+        actors: "Dev Team (Code) ➔ QC Vân (Test) ➔ BA Nam & QC Vân (Wiki) ➔ BA Tú & Minh (Review)",
+        bullets: [
+          "Dev Team code theo Phần 2, 3, 4 và tự kiểm tra qua cổng Dev Self-Test Gate trước khi bàn giao.",
+          "QC Vân nhìn Phần 4 chuẩn bị Test Cases chi tiết ➔ Thực thi test ngay khi Dev chuyển READY FOR QC lên Staging.",
+          "BA Nam &amp; QC Vân viết bài hướng dẫn Scalably Wiki (kèm ảnh chụp màn hình thật từ Staging) song song lúc test.",
+          "BA Tú &amp; Minh review nhanh kỹ thuật (&le; 4h) để bài Wiki sẵn sàng xuất bản khi Go-Live."
+        ],
+        artifact: "Test Cases PASSED + Bài viết Scalably Wiki hoàn tất (Đạt chuẩn DoD)"
+      },
+      6: {
+        stage: "CHẶNG 6: XỬ LÝ YÊU CẦU THAY ĐỔI — CR (ĐÁNH GIÁ &le; 2H • CẬP NHẬT 4H–24H)",
+        actors: "PM Yama (Đưa CR) ➔ CTO Legos, Product Lead Đăng & BA Nam (Đánh giá) ➔ Cập nhật Spec",
+        bullets: [
+          "Khi PM Yama gửi yêu cầu thay đổi: CTO Legos + Product Lead Đăng + BA Nam đánh giá tác động trong &le; 2h.",
+          "CR Nhỏ (&lt; 2h code): BA Nam cập nhật Spec trong 4h, tô vàng [Updated DD/MM], comment tag @Dev @QC.",
+          "CR Lớn (đổi flow/DB): Đổi BA Status = CHANGE REQUEST (Đỏ), họp nhanh với PM Yama chọn dời lịch hoặc tách Phase 2.",
+          "Ghi nhận ngay vào bảng 0.4 Changelog và cập nhật Cột N trên Master Tracker."
+        ],
+        artifact: "Cột N Tracker = Updated DD/MM + Nhãn vàng [Updated DD/MM] tại dòng sửa"
+      }
+    };
+
+    function setWorkflowStep(stepNum) {
+      document.querySelectorAll('.step-tab').forEach((tab, idx) => {
+        if (idx + 1 === stepNum) tab.classList.add('active');
+        else tab.classList.remove('active');
+      });
+
+      const data = workflowStepsData[stepNum];
+      const display = document.getElementById('step-content-display');
+      
+      const bulletsHtml = data.bullets.map(b => `<li class="flex items-start gap-2"><span class="text-emerald-400 font-bold">•</span><span>${b}</span></li>`).join('');
+
+      display.innerHTML = `
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+            <span class="text-xs md:text-sm font-mono font-bold text-emerald-400">${data.stage}</span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 font-mono text-xs border border-slate-700">Người phối hợp: <strong class="text-white">${data.actors}</strong></span>
+          </div>
+          <ul class="text-sm md:text-[15px] text-slate-200 space-y-2 pt-1 leading-relaxed">
+            ${bulletsHtml}
+          </ul>
+        </div>
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs md:text-sm font-mono">
+          <div class="text-slate-400">
+            Đầu ra bàn giao: <span class="text-cyan-300 font-semibold">${data.artifact}</span>
+          </div>
+          <span class="text-slate-500 text-xs">Bấm các chặng khác để xem tiếp &rarr;</span>
+        </div>
+      `;
+    }
+
+    function updateSlide() {
+      slides.forEach((slide, idx) => {
+        if (idx + 1 === currentSlide) slide.classList.add('active');
+        else slide.classList.remove('active');
+      });
+
+      const indicator = document.getElementById('slide-indicator');
+      indicator.textContent = `${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+
+      const progressBar = document.getElementById('progress-bar');
+      const progressPercent = ((currentSlide) / totalSlides) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+
+      updateDots();
+
+      if (currentSlide === 5) {
+        setWorkflowStep(1);
+      }
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        updateSlide();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        updateSlide();
+      }
+    }
+
+    function goToSlide(n) {
+      if (n >= 1 && n <= totalSlides) {
+        currentSlide = n;
+        updateSlide();
+        closeOverview();
+      }
+    }
+
+    function initDots() {
+      const container = document.getElementById('nav-dots');
+      container.innerHTML = '';
+      for (let i = 1; i <= totalSlides; i++) {
+        const dot = document.createElement('button');
+        dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${i === currentSlide ? 'bg-emerald-400 w-5' : 'bg-slate-700 hover:bg-slate-500'}`;
+        dot.title = `Slide ${i}: ${slideTitles[i-1]}`;
+        dot.onclick = () => goToSlide(i);
+        container.appendChild(dot);
+      }
+    }
+
+    function updateDots() {
+      const dots = document.getElementById('nav-dots').children;
+      for (let i = 0; i < dots.length; i++) {
+        if (i + 1 === currentSlide) {
+          dots[i].className = 'w-5 h-2 rounded-full bg-emerald-400 transition-all duration-300 shadow-[0_0_8px_rgba(16,185,129,0.7)]';
+        } else {
+          dots[i].className = 'w-2 h-2 rounded-full bg-slate-700 hover:bg-slate-500 transition-all duration-300';
+        }
+      }
+    }
+
+    function initOverviewGrid() {
+      const grid = document.getElementById('overview-grid');
+      grid.innerHTML = '';
+      slides.forEach((slide, idx) => {
+        const num = idx + 1;
+        const card = document.createElement('div');
+        card.className = `glass-card p-4 rounded-xl cursor-pointer border text-left transition-all ${num === currentSlide ? 'border-emerald-400 ring-2 ring-emerald-400/30' : 'border-slate-800 hover:border-slate-600'}`;
+        card.onclick = () => goToSlide(num);
+        card.innerHTML = `
+          <div class="flex items-center justify-between text-xs font-mono mb-2">
+            <span class="text-slate-400">SLIDE</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-emerald-400 font-bold">${String(num).padStart(2, '0')}</span>
+          </div>
+          <div class="font-bold text-white text-sm line-clamp-2">${slideTitles[idx]}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleOverview() {
+      const modal = document.getElementById('overview-modal');
+      const isVisible = modal.classList.contains('opacity-100');
+      if (isVisible) closeOverview();
+      else openOverview();
+    }
+
+    function openOverview() {
+      initOverviewGrid();
+      const modal = document.getElementById('overview-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100', 'pointer-events-auto');
+    }
+
+    function closeOverview() {
+      const modal = document.getElementById('overview-modal');
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function toggleHelp() {
+      const modal = document.getElementById('help-modal');
+      const isVisible = modal.classList.contains('opacity-100');
+      if (isVisible) {
+        modal.classList.remove('opacity-100', 'pointer-events-auto');
+        modal.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modal.classList.add('opacity-100', 'pointer-events-auto');
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.warn(err));
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeOverview();
+        const helpModal = document.getElementById('help-modal');
+        helpModal.classList.remove('opacity-100', 'pointer-events-auto');
+        helpModal.classList.add('opacity-0', 'pointer-events-none');
+        return;
+      }
+
+      const isOverviewOpen = document.getElementById('overview-modal').classList.contains('opacity-100');
+      if (isOverviewOpen) return;
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+        case ' ':
+        case 'Enter':
+        case 'PageDown':
+          e.preventDefault();
+          nextSlide();
+          break;
+        case 'ArrowLeft':
+        case 'ArrowUp':
+        case 'Backspace':
+        case 'PageUp':
+          e.preventDefault();
+          prevSlide();
+          break;
+        case 'Home':
+          e.preventDefault();
+          goToSlide(1);
+          break;
+        case 'End':
+          e.preventDefault();
+          goToSlide(totalSlides);
+          break;
+        case 'f':
+        case 'F':
+          e.preventDefault();
+          toggleFullScreen();
+          break;
+        case 'g':
+        case 'G':
+        case 'o':
+        case 'O':
+          e.preventDefault();
+          toggleOverview();
+          break;
+        case '?':
+        case 'h':
+        case 'H':
+          e.preventDefault();
+          toggleHelp();
+          break;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+          if (currentSlide === 5) {
+            setWorkflowStep(parseInt(e.key));
+          }
+          break;
+      }
+    });
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+    document.addEventListener('touchstart', (e) => touchStartX = e.changedTouches[0].screenX, false);
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }, false);
+
+    initDots();
+    updateSlide();
+    setWorkflowStep(1);
+  </script>
+</body>
+</html>
